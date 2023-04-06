@@ -82,5 +82,6 @@ def main():
     eigenvectorX = applyDominantEigenvectorMethod(H) # if eigenvector method flag is set, both k and residual are meaningless here, and x0 is not even used for our purposes
 
     # display output including what inputs were used to generate the given output, for each method that was flagged
+    # output should include the final "X" vector as well as explicitly ranking from largest to smallest
 
 main()
