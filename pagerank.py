@@ -25,6 +25,7 @@ def getHFromFile(file, applyRandomSurfer):
 
     # if applyRandomSurfer, add 1 to every cell in matrix
     # "normalize" each column to probability vector
+    # if !applyRandomSurfer, then it may not be a probability vector, in which case print a warning to console but allow to continue
     return H, n
 
 def getX0FromFile(file, n):
