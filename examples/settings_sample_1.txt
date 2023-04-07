@@ -1,8 +1,8 @@
 applyRandomSurfer=True
 usingCustomInitialRanks=False
 iterative=True
-power=True
-eigenvector=True
+power=False
+eigenvector=False
 precision=5
 k=64
 res=2x10^-5

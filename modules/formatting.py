@@ -24,5 +24,6 @@ def vectorToRanking(x, p):
 
     print("\n-----------------------------------------------------------")
 
+
 def printVector(x):
     print(x)

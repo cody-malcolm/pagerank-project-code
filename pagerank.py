@@ -54,7 +54,7 @@ def applyIterativeMethod(H, x0, k, res, p):
         if res != None:
             if diffIsSmaller(x, xi, res):
                 break
-    
+
     x = np.matrix.round(x, p)
 
     print("\n Ranking vector \n")
@@ -113,7 +113,7 @@ def applyDominantEigenvectorMethod(H, p):
     x = np.matrix.round(x, p)
 
     print("\n Ranking vector \n")
-    print("x = ", x) 
+    print("x = ", x)
     vectorToRanking(x, p)
     return x
 

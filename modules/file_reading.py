@@ -6,6 +6,7 @@
 
 import csv
 import numpy as np
+import re
 
 
 def columnSum(n, matrix):
@@ -14,7 +15,25 @@ def columnSum(n, matrix):
     for row in range(matrix.shape[1]):
         sum += matrix[row][n]
     return sum
- 
+
+
+# res should be a value that is either in 0.00001 or 10^-4 or 2x10^-4 format
+def getResidual(string):
+    format1 = "[0-9][.][0-9]+"
+    format2 = "^[[1][0]\^]\-?[0-9]+"
+    format3 = "[0-9]+[x][1][0]\^\-?[0-9]+"
+
+    if re.search(format1, string):
+        return float(string)
+    elif re.search(format2, string):
+        return 10 ** (int(string[3::]))
+    elif re.search(format3, string):
+        xPos = string.find("x")
+        powerPos = string.find("^") + 1
+        return int(string[0:xPos]) * (10 ** int(string[powerPos::]))
+    else:
+        return None
+
 
 def getSettingsFromFile(file):
     """Reads the settings file and returns a dictionary with the properties and flags"""
@@ -36,7 +55,10 @@ def getSettingsFromFile(file):
             settings["res"] = 0.0001
     elif "res" not in settings:
         settings["res"] = None
-    
+
+    if "res" in settings:
+        settings["res"] = getResidual(settings["res"])
+
     if "precision" not in settings:
         settings["precision"] = 2
 
