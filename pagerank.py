@@ -78,22 +78,24 @@ def applyDominantEigenvectorMethod(H):
     print("H = \n", H)
     x = ""
 
-    # TODO
-    # Still need to figure out the way to implement this. Does numpy/scipy have something built in?
     # We just need the dominant eigenvector of H, then to "normalize" it to sum to 1
     eigValues, eigVectors = np.linalg.eig(H)
 
     domEigenvector = []
     for entry in eigVectors[0]:
-        domEigenvector.append(round(entry.real, 5))
+        domEigenvector.append(round(entry.real, 7))
+    
+    domEigenvector = np.array(domEigenvector)
 
     print('\nDominant eigenvalue = %.5f' % eigValues[0].real)
     print('Dominant eigenvector = ', domEigenvector)
 
+    # This is acting up, getting a -0 ?
+    x = domEigenvector / domEigenvector.sum(axis=0, keepdims=1)
 
     print("\n Ranking vector \n")
-    print("x = In Progress...")
-    # vectorToRanking(x)
+    print("x = ", x)
+    vectorToRanking(x)
     return x
 
 
