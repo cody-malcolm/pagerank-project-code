@@ -9,10 +9,12 @@ import numpy as np
 def vectorToRanking(x):
     n = x.shape[0]
     pages = {}
-    for i in range(0, n):
+    for i in range(n):
         pages[f'P({i})'] = x[i]
 
-    sorted_pages = sorted(pages.items(), key=lambda item: item[1])
+    sortedPages = sorted(pages.items(), key=lambda item: item[1])
     print('\n Ranking \n')
     for i in range(n-1, -1, -1):
-        print(sorted_pages[i])
+        print(sortedPages[i])
+
+    print('\n-----------------------------------------------------------')

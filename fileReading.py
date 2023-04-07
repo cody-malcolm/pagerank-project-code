@@ -8,6 +8,7 @@ import csv
 import numpy as np
 
 def getSettingsFromFile(file):
+    # TODO 
     # Placeholder until I define settings file format/ how I want to do it
     # implement a dictionary, struct, or class to store the settings
     settings = {}
@@ -15,13 +16,13 @@ def getSettingsFromFile(file):
     # read/parse settings file and update settings appropriately, use default values where appropriate
     # If and only if neither residual or k is set, use residual = 10^-4
     # If k is not set, use k = 100
-    settings["residual"] = 10 ** (-4)
+    settings["res"] = 10 ** (-4)
     settings["k"] = 100
     settings["applyRandomSurfer"] = True
     settings["usingCustomInitialRanks"] = True
     settings["iterative"] = True
     settings["power"] = True
-    settings["eigenvector"] = False
+    settings["eigenvector"] = True
 
     # return the settings object
     return settings
@@ -31,10 +32,10 @@ def getHFromFile(file, applyRandomSurfer):
     # Read from file, expect a matrix that is 0's and 1's, 1s for outlinks. We will "normalize" columns to probability vectors later
     H = []
     with open(file) as infile:
-        file_contents = csv.reader(
+        fileContents = csv.reader(
             infile, quoting=csv.QUOTE_NONNUMERIC
         ) 
-        for line in file_contents: 
+        for line in fileContents: 
             H.append(line)
 
     H = np.array(H)
@@ -58,10 +59,10 @@ def getHFromFile(file, applyRandomSurfer):
 def getX0FromFile(file, n):
     x0 = []
     with open(file) as infile:
-        file_contents = csv.reader(
+        fileContents = csv.reader(
             infile, quoting=csv.QUOTE_NONNUMERIC
         )
-        for line in file_contents: 
+        for line in fileContents: 
             x0 = line
 
     x0 = np.array(x0)
