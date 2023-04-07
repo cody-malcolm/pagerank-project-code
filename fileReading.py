@@ -7,8 +7,9 @@
 import csv
 import numpy as np
 
+
 def getSettingsFromFile(file):
-    # TODO 
+    # TODO
     # Placeholder until I define settings file format/ how I want to do it
     # implement a dictionary, struct, or class to store the settings
     settings = {}
@@ -32,10 +33,8 @@ def getHFromFile(file, applyRandomSurfer):
     # Read from file, expect a matrix that is 0's and 1's, 1s for outlinks. We will "normalize" columns to probability vectors later
     H = []
     with open(file) as infile:
-        fileContents = csv.reader(
-            infile, quoting=csv.QUOTE_NONNUMERIC
-        ) 
-        for line in fileContents: 
+        fileContents = csv.reader(infile, quoting=csv.QUOTE_NONNUMERIC)
+        for line in fileContents:
             H.append(line)
 
     H = np.array(H)
@@ -59,10 +58,8 @@ def getHFromFile(file, applyRandomSurfer):
 def getX0FromFile(file, n):
     x0 = []
     with open(file) as infile:
-        fileContents = csv.reader(
-            infile, quoting=csv.QUOTE_NONNUMERIC
-        )
-        for line in fileContents: 
+        fileContents = csv.reader(infile, quoting=csv.QUOTE_NONNUMERIC)
+        for line in fileContents:
             x0 = line
 
     x0 = np.array(x0)
@@ -73,7 +70,7 @@ def getX0FromFile(file, n):
 
     # display warning message to console if x0 is not a probability vector, and "normalize"
     if np.sum(x0) != 1:
-        print('Warning: x_0 is not a probability vector, normalizing...')
+        print("Warning: x_0 is not a probability vector, normalizing...")
         x0 = x0 / x0.sum(axis=0, keepdims=1)
 
     return x0
