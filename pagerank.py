@@ -101,11 +101,11 @@ def main():
 
     # Set up all necessary variables and flags
     settings = getSettingsFromFile(settingsFile)
-    H, n = getHFromFile(hMatrixFile, settings["applyRandomSurfer"])
+    H, n = getHFromFile(hMatrixFile, (settings["applyRandomSurfer"] == 'True'))
 
     x0 = []
     # check settings.usingCustomInitialRanks and call getXoFromFile or generateX0 as appropriate
-    if settings["usingCustomInitialRanks"] and xVectorFile != None:
+    if settings["usingCustomInitialRanks"] == 'True' and xVectorFile != None:
         x0 = getX0FromFile(xVectorFile, n)
     else:
         x0 = generateX0(n)
