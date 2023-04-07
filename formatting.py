@@ -8,6 +8,7 @@ import numpy as np
 
 
 def vectorToRanking(x):
+    """Displays the page ranking given a rank vector x"""
     n = x.shape[0]
     pages = {}
     for i in range(n):

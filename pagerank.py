@@ -11,6 +11,7 @@ from formatting import vectorToRanking
 
 
 def diffIsSmaller(x, xi, res) -> bool:
+    """Returns True if the sum of the differences between the entries of x and xi is smaller than the set residual"""
     sum = 0
     for i in range(x.shape[0]):
         sum += abs(x[i] - xi[i])
@@ -20,6 +21,7 @@ def diffIsSmaller(x, xi, res) -> bool:
 
 
 def generateX0(n):
+    """Returns a probability vector of size n where all probabilities are the same"""
     # Vector filled with 1's
     x0 = np.ones(n)
     # Normalizing to generate probability vector
@@ -35,10 +37,10 @@ def applyIterativeMethod(H, x0, k, res):
     x = np.copy(x0)  # solution vector
     xi = np.copy(x0)  # iteration vector
 
-    print('\n Iterative method \n')
-    print('k =', k, ', res =', res)
-    print('H = \n', H)
-    print('x0 =', x0)
+    print("\n Iterative method \n")
+    print("k =", k, ", res =", res)
+    print("H = \n", H)
+    print("x0 =", x0)
 
     for i in range(k):
         xi = x
@@ -46,8 +48,8 @@ def applyIterativeMethod(H, x0, k, res):
         if diffIsSmaller(x, xi, res):
             break
 
-    print('\n Ranking vector \n')
-    print('x =', x)
+    print("\n Ranking vector \n")
+    print("x =", x)
     vectorToRanking(x)
     return x
 
@@ -55,33 +57,48 @@ def applyIterativeMethod(H, x0, k, res):
 def applyPowerIterativeMethod(H0, x0, k):
     H = np.copy(H0)
 
-    print('\n Power Iteration method \n')
-    print('k =', k)
-    print('H = \n', H)
-    print('x0 =', x0)
+    print("\n Power Iteration method \n")
+    print("k =", k)
+    print("H = \n", H)
+    print("x0 =", x0)
 
     for i in range(k):
         H = np.matmul(H, H0)
 
     x = np.matmul(H, x0)
 
-    print('\n Ranking vector \n')
-    print('x =', x)
+    print("\n Ranking vector \n")
+    print("x =", x)
     vectorToRanking(x)
     return x
 
 
 def applyDominantEigenvectorMethod(H):
-    print('\n Dominant Eigenvector method \n')
-    print('H = \n', H)
-    x = ''
+    print("\n Dominant Eigenvector method \n")
+    print("H = \n", H)
+    x = ""
 
     # TODO
     # Still need to figure out the way to implement this. Does numpy/scipy have something built in?
     # We just need the dominant eigenvector of H, then to "normalize" it to sum to 1
+    eigValues, eigVectors = np.linalg.eig(H)
 
-    print('\n Ranking vector \n')
-    print('x = In Progress...')
+    i = 0
+    for value in eigValues:
+        if float(value) - 1.00 < 0.000001:
+            break
+        i += 1
+
+    domEigenvector = []
+    for entry in eigVectors[i]:
+        domEigenvector.append(round(float(entry), 7))
+
+    print('\nDominant eigenvalue = %.5f' % float(eigValues[i]))
+    print('Dominant eigenvector = ', domEigenvector)
+
+
+    print("\n Ranking vector \n")
+    print("x = In Progress...")
     # vectorToRanking(x)
     return x
 
@@ -101,24 +118,24 @@ def main():
 
     # Set up all necessary variables and flags
     settings = getSettingsFromFile(settingsFile)
-    H, n = getHFromFile(hMatrixFile, (settings['applyRandomSurfer'] == 'True'))
+    H, n = getHFromFile(hMatrixFile, (settings["applyRandomSurfer"] == "True"))
 
     x0 = []
     # check settings.usingCustomInitialRanks and call getXoFromFile or generateX0 as appropriate
-    if settings['usingCustomInitialRanks'] == 'True' and xVectorFile != None:
+    if settings["usingCustomInitialRanks"] == "True" and xVectorFile != None:
         x0 = getX0FromFile(xVectorFile, n)
     else:
         x0 = generateX0(n)
 
-    if settings['iterative'] == 'True':  # if iterative flag is set
+    if settings["iterative"] == "True":  # if iterative flag is set
         iterationX = applyIterativeMethod(
-            H, x0, int(settings['k']), float(settings['res'])
+            H, x0, int(settings["k"]), float(settings["res"])
         )
 
-    if settings['power'] == 'True':  # if power iterative flag is set
-        powerIterationX = applyPowerIterativeMethod(H, x0, int(settings['k']))
+    if settings["power"] == "True":  # if power iterative flag is set
+        powerIterationX = applyPowerIterativeMethod(H, x0, int(settings["k"]))
 
-    if settings['eigenvector'] == 'True':  # if eigenvector method flag is set
+    if settings["eigenvector"] == "True":  # if eigenvector method flag is set
         eigenvectorX = applyDominantEigenvectorMethod(H)
 
 
