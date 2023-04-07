@@ -8,6 +8,14 @@ import csv
 import numpy as np
 
 
+def columnSum(n, matrix):
+    """Returns the sum of all entries in column n in matrix"""
+    sum = 0
+    for row in range(matrix.shape[1]):
+        sum += matrix[row][n]
+    return sum
+
+
 def getSettingsFromFile(file):
     """Reads the settings file and returns a dictionary with the properties and flags"""
     separator = "="
@@ -34,7 +42,9 @@ def getSettingsFromFile(file):
 
 
 def getHFromFile(file, applyRandomSurfer):
-    # Read from file, expect a matrix that is 0's and 1's, 1s for outlinks. We will 'normalize' columns to probability vectors later
+    """Reads the Hyperlink matrix file and returns a numpy 2D array"""
+    # Read from file, expect a matrix that is 0's and 1's, 1s for outlinks.
+    # We will 'normalize' columns to probability vectors later
     H = []
     with open(file) as infile:
         fileContents = csv.reader(infile, quoting=csv.QUOTE_NONNUMERIC)
@@ -52,16 +62,20 @@ def getHFromFile(file, applyRandomSurfer):
     if applyRandomSurfer:
         H = H + 1
         # 'normalize' each column to probability vector
-    
+
     H = H / H.sum(axis=0, keepdims=1)
-    #if not applyRandomSurfer:  
-        # TODO: Check if there is a 0 column and print this message only in that case
-        # print("Warning: H columns are not probability vectors")
+    if not applyRandomSurfer:
+        # Check if there is a 0 column and print the message only in that case
+        for i in range(H.shape[0]):
+            if columnSum(i, H) == 0:
+                print("Warning: H columns are not probability vectors")
+                break
 
     return H, n
 
 
 def getX0FromFile(file, n):
+    """Reads the initial probability vector file and returns a numpy vector"""
     x0 = []
     with open(file) as infile:
         fileContents = csv.reader(infile, quoting=csv.QUOTE_NONNUMERIC)

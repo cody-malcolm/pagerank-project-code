@@ -11,7 +11,9 @@ from formatting import vectorToRanking
 
 
 def diffIsSmaller(x, xi, res) -> bool:
-    """Returns True if the sum of the differences between the entries of x and xi is smaller than the set residual"""
+    """Returns True if the sum of the differences between the entries of x and xi
+    is smaller than the set residual
+    """
     sum = 0
     for i in range(x.shape[0]):
         sum += abs(x[i] - xi[i])
@@ -31,7 +33,11 @@ def generateX0(n):
 
 
 def applyIterativeMethod(H, x0, k, res):
-    # check stopping condition between k and res. Residual takes precendece if both are set. Make sure no combination "breaks" it, should work with k, res, or k + res
+    """Implementation of the iterative method for the PageRank Algorithm.
+    Returns the ranking vector
+    """
+    # check stopping condition between k and res. Residual takes precendece if both are set.
+    # Make sure no combination "breaks" it, should work with k, res, or k + res
     # if using k, basically the same idea as in Ex496.py
     # if using residual, similar to Ex496.py but each iteration we check to see if diff less than residual
     x = np.copy(x0)  # solution vector
@@ -56,6 +62,9 @@ def applyIterativeMethod(H, x0, k, res):
 
 
 def applyPowerIterativeMethod(H0, x0, k):
+    """Implementation of the power iteration method for the PageRank Algorithm.
+    Returns the ranking vector
+    """
     H = np.copy(H0)
 
     print("\n Power Iteration method \n")
@@ -75,6 +84,9 @@ def applyPowerIterativeMethod(H0, x0, k):
 
 
 def applyDominantEigenvectorMethod(H):
+    """Implementation of the Dominant Eigenvector method for the PageRank Algorithm.
+    Returns the ranking vector
+    """
     print("\n Dominant Eigenvector method \n")
     print("H = \n", H)
     x = ""
@@ -85,11 +97,11 @@ def applyDominantEigenvectorMethod(H):
     domEigenvector = []
     for entry in eigVectors:
         domEigenvector.append(round(entry[0].real, 7))
-    
+
     domEigenvector = np.array(domEigenvector)
 
-    print('\nDominant eigenvalue = %.5f' % eigValues[0].real)
-    print('Dominant eigenvector = ', domEigenvector)
+    print("\nDominant eigenvalue = %.5f" % eigValues[0].real)
+    print("Dominant eigenvector = ", domEigenvector)
 
     # This is acting up, getting a -0 ?
     x = domEigenvector / domEigenvector.sum(axis=0, keepdims=1)
@@ -102,7 +114,9 @@ def applyDominantEigenvectorMethod(H):
 
 def main():
     # get arguments from user
-    # - settings file (eg. bool to apply random surfer, bool to use custom initial ranks, flag to indicate which of iteration, power iteration, and/or dominant eigenvector to use, int k and/or float residual, number of decimals to round to)
+    # - settings file (eg. bool to apply random surfer, bool to use custom initial ranks,
+    # flag to indicate which of iteration, power iteration, and/or dominant eigenvector to use,
+    # int k and/or float residual, number of decimals to round to)
     # - H file: a file to read in the hyperlink matrix, I recommend .csv or .tsv
     # - x0 file: optional depending on args, a .csv or .tsv to specify initial weights
 
