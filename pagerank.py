@@ -5,33 +5,63 @@
 # pagerank.py
 
 import numpy as np
+import csv  
 
 def getSettingsFromFile(file):
     # implement a dictionary, struct, or class to store the settings
+    settings = {}
 
     # read/parse settings file and update settings appropriately, use default values where appropriate
     # If and only if neither residual or k is set, use residual = 10^-4
     # If k is not set, use k = 100
+    settings['residual'] = 10 ** (-4)
+    settings['k'] = 100
+    settings['applyRandomSurfer'] = True
 
-    # return the settings objectss
-    None
+    # return the settings object
+    return settings
 
 def getHFromFile(file, applyRandomSurfer):
-    H = "" # np.array (2D)
-
     # Read from file, expect a matrix that is 0's and 1's, 1s for outlinks. We will "normalize" columns to probability vectors later
-    n = 1 # determine n
+    h = []
+    with open(file) as infile:
+        file_contents = csv.reader(infile, quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
+        for row in file_contents: # each row is a list
+            h.append(row)
+
+    H = np.array(h) 
+    
+    n = H.shape[0] # determine n
     # throw exception with descriptive error if matrix is not square
+    if n != H.shape[1]:
+        raise Exception('Hyperlink matrix is not square')
 
     # if applyRandomSurfer, add 1 to every cell in matrix
-    # "normalize" each column to probability vector
-    # if !applyRandomSurfer, then it may not be a probability vector, in which case print a warning to console but allow to continue
+    if applyRandomSurfer:
+        H = H + 1
+        # "normalize" each column to probability vector
+        H = H/H.sum(axis=0,keepdims=1)
+    else: # if !applyRandomSurfer, then it may not be a probability vector, in which case print a warning to console but allow to continue
+        print("Warning: H columns are not probability vectors")
+
+    print(H)
+    print(n)
     return H, n
 
 def getX0FromFile(file, n):
-    x0 = "" # np.array (1D)
+    x0 = []
+    with open(file) as infile:
+        file_contents = csv.reader(infile, quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
+        x0 = file_contents
+    
+    x0 = np.array(x0)
     # throw exception with descriptive error if length of input vector is not n
+    if x0.shape != n:
+        raise Exception('X_0 length is not equal to n')
+
     # display warning message to console if x0 is not a probability vector, and "normalize"
+    # TODO
+
     return x0
 
 def generateX0(n):
@@ -72,15 +102,19 @@ def main():
     xVectorFile = ""
 
     settings = getSettingsFromFile(settingsFile)
-    H, n = getHFromFile(hMatrixFile, settings.applyRandomSurfer)
+    H, n = getHFromFile(hMatrixFile, settings['applyRandomSurfer'])
 
-    x0 = np.array # 1d vector, check settings.usingCustomInitialRanks and call getXoFromFile or generateX0 as appropriate
+    x0 = []
+    # check settings.usingCustomInitialRanks and call getXoFromFile or generateX0 as appropriate
+    if settings['usingCustomInitialRanks']:
+        x0 = getX0FromFile(xVectorFile, n)
+    # TODO else
 
-    iterationX = applyIterativeMethod(H, x0, settings.k, settings.res) # if iterative flag is set
+    #iterationX = applyIterativeMethod(H, x0, settings.k, settings.res) # if iterative flag is set
 
-    powerIterationX = applyPowerIterativeMethod(H, x0, settings.k) # if power iterative flag is set, note residual is meaningless here
+    #powerIterationX = applyPowerIterativeMethod(H, x0, settings.k) # if power iterative flag is set, note residual is meaningless here
 
-    eigenvectorX = applyDominantEigenvectorMethod(H) # if eigenvector method flag is set, both k and residual are meaningless here, and x0 is not even used for our purposes
+    #eigenvectorX = applyDominantEigenvectorMethod(H) # if eigenvector method flag is set, both k and residual are meaningless here, and x0 is not even used for our purposes
 
     # display output including what inputs were used to generate the given output, for each method that was flagged
     # output should include the final "X" vector as well as explicitly ranking from largest to smallest
