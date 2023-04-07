@@ -53,7 +53,7 @@ def applyIterativeMethod(H, x0, k, res):
 
 
 def applyPowerIterativeMethod(H0, x0, k):
-    H = np.copy(H0)  # This almost certainly requires some sort of np.copyarray type deal to work as expected
+    H = np.copy(H0) 
 
     print('\n Power Iteration method \n')
     print('k =', k)
@@ -76,6 +76,7 @@ def applyDominantEigenvectorMethod(H):
     print('H = \n', H)
     x = ''
 
+    # TODO
     # Still need to figure out the way to implement this. Does numpy/scipy have something built in?
     # We just need the dominant eigenvector of H, then to "normalize" it to sum to 1
 
