@@ -20,7 +20,7 @@ def columnSum(n, matrix):
 # res should be a value that is either in 0.00001 or 10^-4 or 2x10^-4 format
 def getResidual(string):
     format1 = "[0-9][.][0-9]+"
-    format2 = "^[[1][0]\^]\-?[0-9]+"
+    format2 = "^[10\^]\-?[0-9]+"
     format3 = "[0-9]+[x][1][0]\^\-?[0-9]+"
 
     if re.search(format1, string):

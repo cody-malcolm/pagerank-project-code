@@ -5,4 +5,4 @@ power=False
 eigenvector=False
 precision=5
 k=64
-res=2x10^-5
+res=2x10^-4
