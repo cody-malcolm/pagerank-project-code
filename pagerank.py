@@ -5,79 +5,13 @@
 # pagerank.py
 
 import numpy as np
-import csv
 import sys
-
-
-def getSettingsFromFile(file):
-    # Placeholder until I define settings file format/ how I want to do it
-    # implement a dictionary, struct, or class to store the settings
-    settings = {}
-
-    # read/parse settings file and update settings appropriately, use default values where appropriate
-    # If and only if neither residual or k is set, use residual = 10^-4
-    # If k is not set, use k = 100
-    settings["residual"] = 10 ** (-4)
-    settings["k"] = 100
-    settings["applyRandomSurfer"] = True
-    settings["usingCustomInitialRanks"] = True
-    settings["iterative"] = True
-    settings["power"] = True
-    settings["eigenvector"] = False
-
-    # return the settings object
-    return settings
-
-
-def getHFromFile(file, applyRandomSurfer):
-    # Read from file, expect a matrix that is 0's and 1's, 1s for outlinks. We will "normalize" columns to probability vectors later
-    H = []
-    with open(file) as infile:
-        file_contents = csv.reader(
-            infile, quoting=csv.QUOTE_NONNUMERIC
-        )  # change contents to floats
-        for line in file_contents: 
-            H.append(line)
-
-    H = np.array(H)
-
-    n = H.shape[0]  # determine n
-    # throw exception with descriptive error if matrix is not square
-    if n != H.shape[1]:
-        raise Exception("Hyperlink matrix is not square")
-
-    # if applyRandomSurfer, add 1 to every cell in matrix
-    if applyRandomSurfer:
-        H = H + 1
-        # "normalize" each column to probability vector
-        H = H / H.sum(axis=0, keepdims=1)
-    else:  # if !applyRandomSurfer, then it may not be a probability vector, in which case print a warning to console but allow to continue
-        print("Warning: H columns are not probability vectors")
-
-    return H, n
-
-
-def getX0FromFile(file, n):
-    x0 = []
-    with open(file) as infile:
-        file_contents = csv.reader(
-            infile, quoting=csv.QUOTE_NONNUMERIC
-        )  # change contents to floats
-        for line in file_contents: 
-            x0 = line
-
-    x0 = np.array(x0)
-
-    # throw exception with descriptive error if length of input vector is not n
-    if x0.shape[0] != n:
-        raise Exception("x_0 length is not equal to n")
-
-    # display warning message to console if x0 is not a probability vector, and "normalize"
-    if np.sum(x0) != 1:
-        print('Warning: x_0 is not a probability vector, normalizing...')
-        x0 = x0 / x0.sum(axis=0, keepdims=1)
-
-    return x0
+from file_reading import(
+    getHFromFile,
+    getSettingsFromFile,
+    getX0FromFile
+)
+from formatting import vectorToRanking
 
 
 def generateX0(n):
@@ -105,6 +39,7 @@ def applyIterativeMethod(H, x0, k, res):
 
     print('\n Ranking vector \n')
     print('x =', x)
+    vectorToRanking(x)
     return x
 
 
@@ -123,6 +58,7 @@ def applyPowerIterativeMethod(H0, x0, k):
     
     print('\n Ranking vector \n')
     print('x =', x)
+    vectorToRanking(x)
     return x
 
 
@@ -130,7 +66,6 @@ def applyDominantEigenvectorMethod(H):
     # Still need to figure out the way to implement this. Does numpy/scipy have something built in?
     # We just need the dominant eigenvector of H, then to "normalize" it to sum to 1
     None
-
 
 def main():
     # get arguments from user
