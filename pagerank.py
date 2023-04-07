@@ -83,17 +83,11 @@ def applyDominantEigenvectorMethod(H):
     # We just need the dominant eigenvector of H, then to "normalize" it to sum to 1
     eigValues, eigVectors = np.linalg.eig(H)
 
-    i = 0
-    for value in eigValues:
-        if float(value) - 1.00 < 0.000001:
-            break
-        i += 1
-
     domEigenvector = []
-    for entry in eigVectors[i]:
-        domEigenvector.append(round(float(entry), 7))
+    for entry in eigVectors[0]:
+        domEigenvector.append(round(entry.real, 5))
 
-    print('\nDominant eigenvalue = %.5f' % float(eigValues[i]))
+    print('\nDominant eigenvalue = %.5f' % eigValues[0].real)
     print('Dominant eigenvector = ', domEigenvector)
 
 
