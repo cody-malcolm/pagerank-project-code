@@ -26,6 +26,8 @@ def getSettingsFromFile(file):
         # If and only if neither residual or k is set, use residual = 10^-4
         if "res" not in settings:
             settings["res"] = 0.0001
+    elif "res" not in settings:
+        settings["res"] = None
 
     # return the settings object
     return settings
@@ -52,9 +54,9 @@ def getHFromFile(file, applyRandomSurfer):
         # 'normalize' each column to probability vector
     
     H = H / H.sum(axis=0, keepdims=1)
-    if not applyRandomSurfer:  
+    #if not applyRandomSurfer:  
         # TODO: Check if there is a 0 column and print this message only in that case
-        print("Warning: H columns are not probability vectors")
+        # print("Warning: H columns are not probability vectors")
 
     return H, n
 

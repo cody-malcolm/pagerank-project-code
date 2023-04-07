@@ -45,8 +45,9 @@ def applyIterativeMethod(H, x0, k, res):
     for i in range(k):
         xi = x
         x = np.matmul(H, xi)
-        if diffIsSmaller(x, xi, res):
-            break
+        if res != None:
+            if diffIsSmaller(x, xi, res):
+                break
 
     print("\n Ranking vector \n")
     print("x =", x)
@@ -124,9 +125,14 @@ def main():
         x0 = generateX0(n)
 
     if settings["iterative"] == "True":  # if iterative flag is set
-        iterationX = applyIterativeMethod(
-            H, x0, int(settings["k"]), float(settings["res"])
-        )
+        if settings["res"] != None:
+            iterationX = applyIterativeMethod(
+                H, x0, int(settings["k"]), float(settings["res"])
+            )
+        else:
+            iterationX = applyIterativeMethod(
+                H, x0, int(settings["k"]), settings["res"]
+            )
 
     if settings["power"] == "True":  # if power iterative flag is set
         powerIterationX = applyPowerIterativeMethod(H, x0, int(settings["k"]))

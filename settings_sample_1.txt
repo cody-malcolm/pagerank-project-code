@@ -1,7 +1,6 @@
-res=0.0001
-k=100
 applyRandomSurfer=True
-usingCustomInitialRanks=True
+usingCustomInitialRanks=False
 iterative=True
-power=True
-eigenvector=True
+power=False
+eigenvector=False
+k=64

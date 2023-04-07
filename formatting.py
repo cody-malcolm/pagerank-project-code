@@ -12,7 +12,10 @@ def vectorToRanking(x):
     n = x.shape[0]
     pages = {}
     for i in range(n):
-        pages[f"P({i})"] = x[i]
+        if x[i] < 0.00001:
+            pages[f"P({i})"] = 0.0
+        else:
+            pages[f"P({i})"] = round(x[i],7)
 
     sortedPages = sorted(pages.items(), key=lambda item: item[1])
     print("\n Ranking \n")
