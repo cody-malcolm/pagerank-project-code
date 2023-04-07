@@ -17,6 +17,8 @@ def getSettingsFromFile(file):
     settings['residual'] = 10 ** (-4)
     settings['k'] = 100
     settings['applyRandomSurfer'] = True
+    settings['usingCustomInitialRanks'] = True
+    settings['method'] = 'iterative'
 
     # return the settings object
     return settings
@@ -108,13 +110,17 @@ def main():
     # check settings.usingCustomInitialRanks and call getXoFromFile or generateX0 as appropriate
     if settings['usingCustomInitialRanks']:
         x0 = getX0FromFile(xVectorFile, n)
-    # TODO else
+    else:
+        x0 = generateX0()
 
-    #iterationX = applyIterativeMethod(H, x0, settings.k, settings.res) # if iterative flag is set
+    if settings['method'] == 'iterative': # if iterative flag is set
+        iterationX = applyIterativeMethod(H, x0, settings['k'], settings['residual']) 
 
-    #powerIterationX = applyPowerIterativeMethod(H, x0, settings.k) # if power iterative flag is set, note residual is meaningless here
+    if settings['method'] == 'power':  # if power iterative flag is set, note residual is meaningless here
+        powerIterationX = applyPowerIterativeMethod(H, x0, settings['k'])
 
-    #eigenvectorX = applyDominantEigenvectorMethod(H) # if eigenvector method flag is set, both k and residual are meaningless here, and x0 is not even used for our purposes
+    if settings['method'] == 'eigenvector':  # if eigenvector method flag is set, both k and residual are meaningless here, and x0 is not even used for our purposes
+        eigenvectorX = applyDominantEigenvectorMethod(H)
 
     # display output including what inputs were used to generate the given output, for each method that was flagged
     # output should include the final "X" vector as well as explicitly ranking from largest to smallest
