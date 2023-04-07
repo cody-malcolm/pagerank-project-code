@@ -4,3 +4,4 @@ iterative=True
 power=True
 eigenvector=True
 k=64
+res=2x10^-5
