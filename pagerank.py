@@ -35,10 +35,10 @@ def applyIterativeMethod(H, x0, k, res):
     x = np.copy(x0)  # solution vector
     xi = np.copy(x0)  # iteration vector
 
-    print("\n Iterative method \n")
-    print("k =", k, ", res =", res)
-    print("H = \n", H)
-    print("x0 =", x0)
+    print('\n Iterative method \n')
+    print('k =', k, ', res =', res)
+    print('H = \n', H)
+    print('x0 =', x0)
 
     for i in range(k):
         xi = x
@@ -46,8 +46,8 @@ def applyIterativeMethod(H, x0, k, res):
         if diffIsSmaller(x, xi, res):
             break
 
-    print("\n Ranking vector \n")
-    print("x =", x)
+    print('\n Ranking vector \n')
+    print('x =', x)
     vectorToRanking(x)
     return x
 
@@ -55,33 +55,33 @@ def applyIterativeMethod(H, x0, k, res):
 def applyPowerIterativeMethod(H0, x0, k):
     H = np.copy(H0)
 
-    print("\n Power Iteration method \n")
-    print("k =", k)
-    print("H = \n", H)
-    print("x0 =", x0)
+    print('\n Power Iteration method \n')
+    print('k =', k)
+    print('H = \n', H)
+    print('x0 =', x0)
 
     for i in range(k):
         H = np.matmul(H, H0)
 
     x = np.matmul(H, x0)
 
-    print("\n Ranking vector \n")
-    print("x =", x)
+    print('\n Ranking vector \n')
+    print('x =', x)
     vectorToRanking(x)
     return x
 
 
 def applyDominantEigenvectorMethod(H):
-    print("\n Dominant Eigenvector method \n")
-    print("H = \n", H)
-    x = ""
+    print('\n Dominant Eigenvector method \n')
+    print('H = \n', H)
+    x = ''
 
     # TODO
     # Still need to figure out the way to implement this. Does numpy/scipy have something built in?
     # We just need the dominant eigenvector of H, then to "normalize" it to sum to 1
 
-    print("\n Ranking vector \n")
-    print("x = In Progress...")
+    print('\n Ranking vector \n')
+    print('x = In Progress...')
     # vectorToRanking(x)
     return x
 
@@ -101,24 +101,24 @@ def main():
 
     # Set up all necessary variables and flags
     settings = getSettingsFromFile(settingsFile)
-    H, n = getHFromFile(hMatrixFile, (settings["applyRandomSurfer"] == 'True'))
+    H, n = getHFromFile(hMatrixFile, (settings['applyRandomSurfer'] == 'True'))
 
     x0 = []
     # check settings.usingCustomInitialRanks and call getXoFromFile or generateX0 as appropriate
-    if settings["usingCustomInitialRanks"] == 'True' and xVectorFile != None:
+    if settings['usingCustomInitialRanks'] == 'True' and xVectorFile != None:
         x0 = getX0FromFile(xVectorFile, n)
     else:
         x0 = generateX0(n)
 
-    if settings["iterative"] == "True":  # if iterative flag is set
+    if settings['iterative'] == 'True':  # if iterative flag is set
         iterationX = applyIterativeMethod(
-            H, x0, int(settings["k"]), float(settings["res"])
+            H, x0, int(settings['k']), float(settings['res'])
         )
 
-    if settings["power"] == "True":  # if power iterative flag is set
-        powerIterationX = applyPowerIterativeMethod(H, x0, int(settings["k"]))
+    if settings['power'] == 'True':  # if power iterative flag is set
+        powerIterationX = applyPowerIterativeMethod(H, x0, int(settings['k']))
 
-    if settings["eigenvector"] == "True":  # if eigenvector method flag is set
+    if settings['eigenvector'] == 'True':  # if eigenvector method flag is set
         eigenvectorX = applyDominantEigenvectorMethod(H)
 
 

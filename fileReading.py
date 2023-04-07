@@ -9,7 +9,7 @@ import numpy as np
 
 
 def getSettingsFromFile(file):
-    separator = "="
+    separator = '='
     settings = {}
 
     # read/parse settings file and update settings appropriately, use default values where appropriate
@@ -20,18 +20,18 @@ def getSettingsFromFile(file):
                 settings[key] = value.strip()
 
     # If k is not set, use k = 100
-    if "k" not in settings:
-        settings["k"] = 100
+    if 'k' not in settings:
+        settings['k'] = 100
         # If and only if neither residual or k is set, use residual = 10^-4
-        if "res" not in settings:
-            settings["res"] = 0.0001
+        if 'res' not in settings:
+            settings['res'] = 0.0001
 
     # return the settings object
     return settings
 
 
 def getHFromFile(file, applyRandomSurfer):
-    # Read from file, expect a matrix that is 0's and 1's, 1s for outlinks. We will "normalize" columns to probability vectors later
+    # Read from file, expect a matrix that is 0's and 1's, 1s for outlinks. We will 'normalize' columns to probability vectors later
     H = []
     with open(file) as infile:
         fileContents = csv.reader(infile, quoting=csv.QUOTE_NONNUMERIC)
@@ -43,15 +43,15 @@ def getHFromFile(file, applyRandomSurfer):
     n = H.shape[0]  # determine n
     # throw exception with descriptive error if matrix is not square
     if n != H.shape[1]:
-        raise Exception("Hyperlink matrix is not square")
+        raise Exception('Hyperlink matrix is not square')
 
     # if applyRandomSurfer, add 1 to every cell in matrix
     if applyRandomSurfer:
         H = H + 1
-        # "normalize" each column to probability vector
+        # 'normalize' each column to probability vector
         H = H / H.sum(axis=0, keepdims=1)
     else:  # if !applyRandomSurfer, then it may not be a probability vector, in which case print a warning to console but allow to continue
-        print("Warning: H columns are not probability vectors")
+        print('Warning: H columns are not probability vectors')
 
     return H, n
 
@@ -67,11 +67,11 @@ def getX0FromFile(file, n):
 
     # throw exception with descriptive error if length of input vector is not n
     if x0.shape[0] != n:
-        raise Exception("x_0 length is not equal to n")
+        raise Exception('x_0 length is not equal to n')
 
-    # display warning message to console if x0 is not a probability vector, and "normalize"
+    # display warning message to console if x0 is not a probability vector, and 'normalize'
     if np.sum(x0) != 1:
-        print("Warning: x_0 is not a probability vector, normalizing...")
+        print('Warning: x_0 is not a probability vector, normalizing...')
         x0 = x0 / x0.sum(axis=0, keepdims=1)
 
     return x0
