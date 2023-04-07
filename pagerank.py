@@ -6,6 +6,7 @@
 
 import numpy as np
 import csv
+import sys
 
 
 def getSettingsFromFile(file):
@@ -17,8 +18,8 @@ def getSettingsFromFile(file):
     # If k is not set, use k = 100
     settings["residual"] = 10 ** (-4)
     settings["k"] = 100
-    settings["applyRandomSurfer"] = True
-    settings["usingCustomInitialRanks"] = False
+    settings["applyRandomSurfer"] = False
+    settings["usingCustomInitialRanks"] = True
     settings["iterative"] = True
     settings["power"] = False
     settings["eigenvector"] = False
@@ -34,8 +35,8 @@ def getHFromFile(file, applyRandomSurfer):
         file_contents = csv.reader(
             infile, quoting=csv.QUOTE_NONNUMERIC
         )  # change contents to floats
-        for row in file_contents: 
-            H.append(row)
+        for line in file_contents: 
+            H.append(line)
 
     H = np.array(H)
 
@@ -63,28 +64,28 @@ def getX0FromFile(file, n):
         file_contents = csv.reader(
             infile, quoting=csv.QUOTE_NONNUMERIC
         )  # change contents to floats
-        for row in file_contents: 
-            x0.append(row)
+        for line in file_contents: 
+            x0 = line
 
     x0 = np.array(x0)
 
     # throw exception with descriptive error if length of input vector is not n
-    if x0.shape[1] != n:
+    if x0.shape[0] != n:
         raise Exception("x_0 length is not equal to n")
 
     # display warning message to console if x0 is not a probability vector, and "normalize"
     if np.sum(x0) != 1:
         print('Warning: x_0 is not a probability vector, normalizing...')
-        x0 = x0 / x0.sum(axis=1, keepdims=1)
+        x0 = x0 / x0.sum(axis=0, keepdims=1)
 
     return x0
 
 
 def generateX0(n):
     # Vector filled with 1's
-    x0 = np.ones((1, n))
+    x0 = np.ones(n)
     # Normalizing to generate probability vector
-    x0 = x0 / x0.sum(axis=1, keepdims=1)
+    x0 = x0 / x0.sum(axis=0, keepdims=1)
 
     return x0
 
@@ -120,9 +121,10 @@ def main():
     # - H file: a file to read in the hyperlink matrix, I recommend .csv or .tsv
     # - x0 file: optional depending on args, a .csv or .tsv to specify initial weights
 
-    settingsFile = ""
-    hMatrixFile = "Fig43.csv"
-    xVectorFile = "SampleX0_1.csv"
+    settingsFile = sys.argv[1]
+    hMatrixFile = sys.argv[2]
+    if len(sys.argv) == 4:
+        xVectorFile = sys.argv[3]
 
     settings = getSettingsFromFile(settingsFile)
     H, n = getHFromFile(hMatrixFile, settings["applyRandomSurfer"])
