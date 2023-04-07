@@ -83,8 +83,8 @@ def applyDominantEigenvectorMethod(H):
     eigValues, eigVectors = np.linalg.eig(H)
 
     domEigenvector = []
-    for entry in eigVectors[0]:
-        domEigenvector.append(round(entry.real, 7))
+    for entry in eigVectors:
+        domEigenvector.append(round(entry[0].real, 7))
     
     domEigenvector = np.array(domEigenvector)
 
