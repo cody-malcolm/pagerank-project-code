@@ -7,7 +7,7 @@
 import numpy as np
 
 
-def vectorToRanking(x):
+def vectorToRanking(x, p):
     """Displays the page ranking given a rank vector x"""
     n = x.shape[0]
     pages = {}
@@ -15,7 +15,7 @@ def vectorToRanking(x):
         if x[i] < 0.00001:
             pages[f"P({i})"] = 0.0
         else:
-            pages[f"P({i})"] = round(x[i], 7)
+            pages[f"P({i})"] = round(x[i], p)
 
     sortedPages = sorted(pages.items(), key=lambda item: item[1])
     print("\n Ranking \n")
@@ -23,3 +23,6 @@ def vectorToRanking(x):
         print(sortedPages[i])
 
     print("\n-----------------------------------------------------------")
+
+def printVector(x):
+    print(x)

@@ -44,7 +44,7 @@ def getSettingsFromFile(file):
     return settings
 
 
-def getHFromFile(file, applyRandomSurfer):
+def getHFromFile(file, settings):
     """Reads the Hyperlink matrix file and returns a numpy 2D array"""
     # Read from file, expect a matrix that is 0's and 1's, 1s for outlinks.
     # We will 'normalize' columns to probability vectors later
@@ -62,12 +62,12 @@ def getHFromFile(file, applyRandomSurfer):
         raise Exception("Hyperlink matrix is not square")
 
     # if applyRandomSurfer, add 1 to every cell in matrix
-    if applyRandomSurfer:
+    if settings["applyRandomSurfer"] == "True":
         H = H + 1
         # 'normalize' each column to probability vector
 
     H = H / H.sum(axis=0, keepdims=1)
-    if not applyRandomSurfer:
+    if settings["applyRandomSurfer"] != "True":
         # Check if there is a 0 column and print the message only in that case
         for i in range(H.shape[0]):
             if columnSum(i, H) == 0:

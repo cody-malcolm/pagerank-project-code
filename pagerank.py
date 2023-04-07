@@ -54,10 +54,12 @@ def applyIterativeMethod(H, x0, k, res, p):
         if res != None:
             if diffIsSmaller(x, xi, res):
                 break
+    
+    x = np.matrix.round(x, p)
 
     print("\n Ranking vector \n")
     print("x =", x)
-    vectorToRanking(x)
+    vectorToRanking(x, p)
     return x
 
 
@@ -76,10 +78,11 @@ def applyPowerIterativeMethod(H0, x0, k, p):
         H = np.matmul(H, H0)
 
     x = np.matmul(H, x0)
+    x = np.matrix.round(x, p)
 
     print("\n Ranking vector \n")
     print("x =", x)
-    vectorToRanking(x)
+    vectorToRanking(x, p)
     return x
 
 
@@ -87,6 +90,7 @@ def applyDominantEigenvectorMethod(H, p):
     """Implementation of the Dominant Eigenvector method for the PageRank Algorithm.
     Returns the ranking vector
     """
+    H = np.matrix.round(H, p)
     print("\n Dominant Eigenvector method \n")
     print("H = \n", H)
     x = ""
@@ -99,16 +103,18 @@ def applyDominantEigenvectorMethod(H, p):
         domEigenvector.append(round(entry[0].real, 7))
 
     domEigenvector = np.array(domEigenvector)
+    domEigenvector = np.matrix.round(domEigenvector, p)
 
-    print("\nDominant eigenvalue = %.5f" % eigValues[0].real)
+    print("\nDominant eigenvalue = %.2f" % eigValues[0].real)
     print("Dominant eigenvector = ", domEigenvector)
 
     # This is acting up, getting a -0 ?
     x = domEigenvector / domEigenvector.sum(axis=0, keepdims=1)
+    x = np.matrix.round(x, p)
 
     print("\n Ranking vector \n")
-    print("x = ", x)
-    vectorToRanking(x)
+    print("x = ", x) 
+    vectorToRanking(x, p)
     return x
 
 
@@ -129,7 +135,9 @@ def main():
 
     # Set up all necessary variables and flags
     settings = getSettingsFromFile(settingsFile)
-    H, n = getHFromFile(hMatrixFile, (settings["applyRandomSurfer"] == "True"))
+    H, n = getHFromFile(hMatrixFile, settings)
+
+    p = int(settings["precision"])
 
     x0 = []
     # check settings.usingCustomInitialRanks and call getXoFromFile or generateX0 as appropriate
@@ -138,21 +146,25 @@ def main():
     else:
         x0 = generateX0(n)
 
+    # Format matrixes to specified precision
+    H = np.matrix.round(H, p)
+    x0 = np.matrix.round(x0, p)
+
     if settings["iterative"] == "True":  # if iterative flag is set
         if settings["res"] != None:
             iterationX = applyIterativeMethod(
-                H, x0, int(settings["k"]), float(settings["res"]), int(settings["precision"])
+                H, x0, int(settings["k"]), float(settings["res"]), p
             )
         else:
             iterationX = applyIterativeMethod(
-                H, x0, int(settings["k"]), settings["res"], int(settings["precision"])
+                H, x0, int(settings["k"]), settings["res"], p
             )
 
     if settings["power"] == "True":  # if power iterative flag is set
-        powerIterationX = applyPowerIterativeMethod(H, x0, int(settings["k"]), int(settings["precision"]))
+        powerIterationX = applyPowerIterativeMethod(H, x0, int(settings["k"]), p)
 
     if settings["eigenvector"] == "True":  # if eigenvector method flag is set
-        eigenvectorX = applyDominantEigenvectorMethod(H, int(settings["precision"]))
+        eigenvectorX = applyDominantEigenvectorMethod(H, p)
 
 
 main()
