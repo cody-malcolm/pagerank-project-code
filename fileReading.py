@@ -50,8 +50,10 @@ def getHFromFile(file, applyRandomSurfer):
     if applyRandomSurfer:
         H = H + 1
         # 'normalize' each column to probability vector
-        H = H / H.sum(axis=0, keepdims=1)
-    else:  # if !applyRandomSurfer, then it may not be a probability vector, in which case print a warning to console but allow to continue
+    
+    H = H / H.sum(axis=0, keepdims=1)
+    if not applyRandomSurfer:  
+        # TODO: Check if there is a 0 column and print this message only in that case
         print("Warning: H columns are not probability vectors")
 
     return H, n
