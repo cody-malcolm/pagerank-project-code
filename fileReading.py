@@ -14,7 +14,7 @@ def columnSum(n, matrix):
     for row in range(matrix.shape[1]):
         sum += matrix[row][n]
     return sum
-
+ 
 
 def getSettingsFromFile(file):
     """Reads the settings file and returns a dictionary with the properties and flags"""
@@ -36,6 +36,9 @@ def getSettingsFromFile(file):
             settings["res"] = 0.0001
     elif "res" not in settings:
         settings["res"] = None
+    
+    if "precision" not in settings:
+        settings["precision"] = 2
 
     # return the settings object
     return settings

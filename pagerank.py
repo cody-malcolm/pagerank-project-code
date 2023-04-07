@@ -32,7 +32,7 @@ def generateX0(n):
     return x0
 
 
-def applyIterativeMethod(H, x0, k, res):
+def applyIterativeMethod(H, x0, k, res, p):
     """Implementation of the iterative method for the PageRank Algorithm.
     Returns the ranking vector
     """
@@ -61,7 +61,7 @@ def applyIterativeMethod(H, x0, k, res):
     return x
 
 
-def applyPowerIterativeMethod(H0, x0, k):
+def applyPowerIterativeMethod(H0, x0, k, p):
     """Implementation of the power iteration method for the PageRank Algorithm.
     Returns the ranking vector
     """
@@ -83,7 +83,7 @@ def applyPowerIterativeMethod(H0, x0, k):
     return x
 
 
-def applyDominantEigenvectorMethod(H):
+def applyDominantEigenvectorMethod(H, p):
     """Implementation of the Dominant Eigenvector method for the PageRank Algorithm.
     Returns the ranking vector
     """
@@ -141,18 +141,18 @@ def main():
     if settings["iterative"] == "True":  # if iterative flag is set
         if settings["res"] != None:
             iterationX = applyIterativeMethod(
-                H, x0, int(settings["k"]), float(settings["res"])
+                H, x0, int(settings["k"]), float(settings["res"]), int(settings["precision"])
             )
         else:
             iterationX = applyIterativeMethod(
-                H, x0, int(settings["k"]), settings["res"]
+                H, x0, int(settings["k"]), settings["res"], int(settings["precision"])
             )
 
     if settings["power"] == "True":  # if power iterative flag is set
-        powerIterationX = applyPowerIterativeMethod(H, x0, int(settings["k"]))
+        powerIterationX = applyPowerIterativeMethod(H, x0, int(settings["k"]), int(settings["precision"]))
 
     if settings["eigenvector"] == "True":  # if eigenvector method flag is set
-        eigenvectorX = applyDominantEigenvectorMethod(H)
+        eigenvectorX = applyDominantEigenvectorMethod(H, int(settings["precision"]))
 
 
 main()
