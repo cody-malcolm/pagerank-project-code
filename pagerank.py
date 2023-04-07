@@ -11,8 +11,10 @@ from formatting import vectorToRanking
 
 
 def diffIsSmaller(x, xi, res) -> bool:
+    sum = 0
     for i in range(x.shape[0]):
-        if (x[i] - xi[i]) > res:
+        sum += abs(x[i] - xi[i])
+        if sum > res:
             return False
     return True
 
@@ -94,6 +96,8 @@ def main():
     hMatrixFile = sys.argv[2]
     if len(sys.argv) == 4:
         xVectorFile = sys.argv[3]
+    else:
+        xVectorFile = None
 
     # Set up all necessary variables and flags
     settings = getSettingsFromFile(settingsFile)
@@ -101,18 +105,18 @@ def main():
 
     x0 = []
     # check settings.usingCustomInitialRanks and call getXoFromFile or generateX0 as appropriate
-    if settings["usingCustomInitialRanks"]:
+    if settings["usingCustomInitialRanks"] and xVectorFile != None:
         x0 = getX0FromFile(xVectorFile, n)
     else:
         x0 = generateX0(n)
 
     if settings["iterative"]:  # if iterative flag is set
-        iterationX = applyIterativeMethod(H, x0, settings["k"], settings["res"])
+        iterationX = applyIterativeMethod(
+            H, x0, int(settings["k"]), float(settings["res"])
+        )
 
-    if settings[
-        "power"
-    ]:  # if power iterative flag is set, note residual is meaningless here
-        powerIterationX = applyPowerIterativeMethod(H, x0, settings["k"])
+    if settings["power"]:  # if power iterative flag is set
+        powerIterationX = applyPowerIterativeMethod(H, x0, int(settings["k"]))
 
     if settings["eigenvector"]:  # if eigenvector method flag is set
         eigenvectorX = applyDominantEigenvectorMethod(H)

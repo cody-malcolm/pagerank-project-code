@@ -9,21 +9,22 @@ import numpy as np
 
 
 def getSettingsFromFile(file):
-    # TODO
-    # Placeholder until I define settings file format/ how I want to do it
-    # implement a dictionary, struct, or class to store the settings
+    separator = "="
     settings = {}
 
     # read/parse settings file and update settings appropriately, use default values where appropriate
-    # If and only if neither residual or k is set, use residual = 10^-4
+    with open(file) as infile:
+        for line in infile:
+            if separator in line:
+                key, value = line.split(separator, 1)
+                settings[key] = value
+
     # If k is not set, use k = 100
-    settings["res"] = 10 ** (-4)
-    settings["k"] = 100
-    settings["applyRandomSurfer"] = True
-    settings["usingCustomInitialRanks"] = True
-    settings["iterative"] = True
-    settings["power"] = True
-    settings["eigenvector"] = True
+    if "k" not in settings:
+        settings["k"] = 100
+        # If and only if neither residual or k is set, use residual = 10^-4
+        if "res" not in settings:
+            settings["res"] = 0.0001
 
     # return the settings object
     return settings

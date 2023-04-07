@@ -1,0 +1,7 @@
+res=0.0001
+k=100
+applyRandomSurfer=True
+usingCustomInitialRanks=True
+iterative=True
+power=True
+eigenvector=True
