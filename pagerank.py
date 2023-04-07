@@ -10,6 +10,7 @@ import sys
 
 
 def getSettingsFromFile(file):
+    # Placeholder until I define settings file format/ how I want to do it
     # implement a dictionary, struct, or class to store the settings
     settings = {}
 
@@ -18,10 +19,10 @@ def getSettingsFromFile(file):
     # If k is not set, use k = 100
     settings["residual"] = 10 ** (-4)
     settings["k"] = 100
-    settings["applyRandomSurfer"] = False
+    settings["applyRandomSurfer"] = True
     settings["usingCustomInitialRanks"] = True
     settings["iterative"] = True
-    settings["power"] = False
+    settings["power"] = True
     settings["eigenvector"] = False
 
     # return the settings object
@@ -53,8 +54,6 @@ def getHFromFile(file, applyRandomSurfer):
     else:  # if !applyRandomSurfer, then it may not be a probability vector, in which case print a warning to console but allow to continue
         print("Warning: H columns are not probability vectors")
 
-    print('H =\n', H)
-    print('n = ', n)
     return H, n
 
 
@@ -94,17 +93,37 @@ def applyIterativeMethod(H, x0, k, res):
     # check stopping condition between k and res. Residual takes precendece if both are set. Make sure no combination "breaks" it, should work with k, res, or k + res
     # if using k, basically the same idea as in Ex496.py
     # if using residual, similar to Ex496.py but each iteration we check to see if diff less than residual
-    x = ""  # solution vector
+    x = np.copy(x0)  # solution vector
+
+    print('\n Iterative method \n')
+    print('k =', k, ', res =', res)
+    print('H = ', H)
+    print('x0 =', x0)
+
+    for i in range(0, k):
+        x = np.matmul(H, x)
+
+    print('\n Ranking vector \n')
+    print('x =', x)
     return x
 
 
 def applyPowerIterativeMethod(H0, x0, k):
-    H = H0  # This almost certainly requires some sort of np.copyarray type deal to work as expected
+    H = np.copy(H0)  # This almost certainly requires some sort of np.copyarray type deal to work as expected
+
+    print('\n Power Iteration method \n')
+    print('k =', k)
+    print('H = ', H)
+    print('x0 =', x0)
 
     for i in range(k):
         H = np.matmul(H, H0)
 
-    return np.matmul(H, x0)
+    x = np.matmul(H, x0)
+    
+    print('\n Ranking vector \n')
+    print('x =', x)
+    return x
 
 
 def applyDominantEigenvectorMethod(H):
