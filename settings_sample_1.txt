@@ -1,0 +1,6 @@
+applyRandomSurfer=False
+usingCustomInitialRanks=True
+iterative=True
+power=True
+eigenvector=True
+k=64
