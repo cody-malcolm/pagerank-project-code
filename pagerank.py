@@ -110,15 +110,15 @@ def main():
     else:
         x0 = generateX0(n)
 
-    if settings["iterative"]:  # if iterative flag is set
+    if settings["iterative"] == "True":  # if iterative flag is set
         iterationX = applyIterativeMethod(
             H, x0, int(settings["k"]), float(settings["res"])
         )
 
-    if settings["power"]:  # if power iterative flag is set
+    if settings["power"] == "True":  # if power iterative flag is set
         powerIterationX = applyPowerIterativeMethod(H, x0, int(settings["k"]))
 
-    if settings["eigenvector"]:  # if eigenvector method flag is set
+    if settings["eigenvector"] == "True":  # if eigenvector method flag is set
         eigenvectorX = applyDominantEigenvectorMethod(H)
 
 

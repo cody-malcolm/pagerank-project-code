@@ -17,7 +17,7 @@ def getSettingsFromFile(file):
         for line in infile:
             if separator in line:
                 key, value = line.split(separator, 1)
-                settings[key] = value
+                settings[key] = value.strip()
 
     # If k is not set, use k = 100
     if "k" not in settings:
