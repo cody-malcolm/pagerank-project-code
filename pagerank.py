@@ -6,8 +6,8 @@
 
 import numpy as np
 import sys
-from fileReading import getHFromFile, getSettingsFromFile, getX0FromFile
-from formatting import vectorToRanking
+from modules.file_reading import getHFromFile, getSettingsFromFile, getX0FromFile
+from modules.formatting import vectorToRanking
 
 
 def diffIsSmaller(x, xi, res) -> bool:

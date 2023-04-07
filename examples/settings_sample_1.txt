@@ -3,5 +3,6 @@ usingCustomInitialRanks=True
 iterative=True
 power=True
 eigenvector=True
-k=64
 precision=2
+k=64
+res=2x10^-5
