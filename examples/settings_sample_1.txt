@@ -1,5 +1,5 @@
 applyRandomSurfer=True
-usingCustomInitialRanks=False
+probabilityNormalization=False
 iterative=True
 power=True
 eigenvector=True

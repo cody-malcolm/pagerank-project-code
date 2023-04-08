@@ -131,12 +131,13 @@ def main():
     H, n = get_H_from_file(h_matrix_file, settings)
 
     p = int(settings["precision"])
+    pNorm = (settings["probabilityNormalization"] == True)
 
     np.set_printoptions(formatter={'float': lambda x: f'{x:.{p}f}'})
 
     x0 = []
     # check settings.usingCustomInitialRanks and call getXoFromFile or generateX0 as appropriate
-    if settings["usingCustomInitialRanks"] == "True" and x_vector_file != None:
+    if x_vector_file != None:
         x0 = get_x0_from_file(x_vector_file, n)
     else:
         x0 = generate_x0(n)
