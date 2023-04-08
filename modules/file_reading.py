@@ -145,8 +145,12 @@ def get_x0_from_file(file: str, n: int):
         raise Exception("x_0 length is not equal to n")
 
     # display warning message to console if x0 is not a probability vector, and perform probability normalization
-    if np.sum(x0) != 1:
-        print("Warning: x_0 is not a probability vector, normalizing...")
-        x0 = x0 / x0.sum(axis=0, keepdims=1)
+    sum: float = np.sum(x0)
+    if sum == 0:
+        raise Exception("Error: Unexpected input, given a zero vector for initial page rankings")
+    elif sum != 1:
+        if sum > 1.01 or sum < 0.99: # don't display warning if it's "close enough", but still normalize to improve precision
+            print("\nWarning: input ranking vector was not a probability vector, so performing probability normalization")
+        x0 = x0 / x0.sum(axis=0, keepdims=1)    
 
     return x0
