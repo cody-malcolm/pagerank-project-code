@@ -47,6 +47,9 @@ def get_settings_from_file(file):
                 key, value = line.split(separator, 1)
                 settings[key] = value.strip()
 
+    if "res" in settings:
+        settings["res"] = getResidual(settings["res"])
+        
     # If k is not set, use k = 100
     if "k" not in settings:
         settings["k"] = 100
@@ -56,8 +59,6 @@ def get_settings_from_file(file):
     elif "res" not in settings:
         settings["res"] = None
 
-    if "res" in settings:
-        settings["res"] = getResidual(settings["res"])
 
     if "precision" not in settings:
         settings["precision"] = 2
