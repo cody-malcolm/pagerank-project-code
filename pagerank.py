@@ -76,8 +76,10 @@ def apply_power_iteration(H0: np.array, x0: np.array, k: int) -> np.array:
     print("H = \n", H)
     print("x0 =", x0)
 
-    for i in range(k):
+    for _ in range(k):
         H = np.matmul(H, H0)
+
+    print("H^k = \n", H)
 
     return np.matmul(H, x0)
 
@@ -119,24 +121,29 @@ def main():
     # - H file: a file to read in the hyperlink matrix, I recommend .csv or .tsv
     # - x0 file: optional depending on args, a .csv or .tsv to specify initial weights
 
-    settings_file = sys.argv[1]
-    h_matrix_file = sys.argv[2]
+    if len(sys.argv) < 3:
+        print("Incorrect usage. Expected: 'python3 pagerank.py <settings_file> <h_matrix_file> [x_vector_file]'")
+        print("See README for more details.")
+        exit(-1)
+
+    settings_file: str = sys.argv[1]
+    h_matrix_file: str = sys.argv[2]
     if len(sys.argv) == 4:
-        x_vector_file = sys.argv[3]
+        x_vector_file: str = sys.argv[3]
     else:
-        x_vector_file = None
+        x_vector_file: str = None
 
     # Set up all necessary variables and flags
     settings = get_settings_from_file(settings_file)
     H, n = get_H_from_file(h_matrix_file, settings)
 
     p = int(settings["precision"])
-    pNorm = (settings["probabilityNormalization"] == True)
+    use_probability_normalization: bool = settings["apply_probability_normalization"]
 
     np.set_printoptions(formatter={'float': lambda x: f'{x:.{p}f}'})
 
     x0 = []
-    # check settings.usingCustomInitialRanks and call getXoFromFile or generateX0 as appropriate
+    
     if x_vector_file != None:
         x0 = get_x0_from_file(x_vector_file, n)
     else:
@@ -146,18 +153,18 @@ def main():
     H = np.matrix.round(H, p)
     x0 = np.matrix.round(x0, p)
 
-    if settings["iterative"] == "True":  # if iterative flag is set
+    if settings["iterative"]:  # if iterative flag is set
         if settings["res"] != None:
-            iteration_result = apply_iteration(H, x0, int(settings["k"]), float(settings["res"]))
+            iteration_result = apply_iteration(H, x0, settings["k"], float(settings["res"]))
         else:
-            iteration_result = apply_iteration(H, x0, int(settings["k"]), settings["res"])
+            iteration_result = apply_iteration(H, x0, settings["k"], settings["res"])
         display_results(iteration_result, p)
 
-    if settings["power"] == "True":  # if power iterative flag is set
-        power_iteration_result = apply_power_iteration(H, x0, int(settings["k"]))
+    if settings["power"]:  # if power iterative flag is set
+        power_iteration_result = apply_power_iteration(H, x0, settings["k"])
         display_results(power_iteration_result, p)
 
-    if settings["eigenvector"] == "True":  # if eigenvector method flag is set
+    if settings["eigenvector"]:  # if eigenvector method flag is set
         eigenvector_result = apply_dominant_eigenvector_method(H)
         display_results(eigenvector_result, p)
 

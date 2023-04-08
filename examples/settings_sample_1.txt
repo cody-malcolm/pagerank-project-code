@@ -1,8 +1,0 @@
-applyRandomSurfer=True
-probabilityNormalization=False
-iterative=True
-power=True
-eigenvector=True
-precision=4
-k=64
-res=2x10^-6

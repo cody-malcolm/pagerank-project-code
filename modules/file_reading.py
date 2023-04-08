@@ -9,36 +9,48 @@ import numpy as np
 import re
 
 
-def columnSum(n, matrix):
+def column_sum(n, matrix):
     """Returns the sum of all entries in column n in matrix"""
     sum = 0
     for row in range(matrix.shape[1]):
         sum += matrix[row][n]
     return sum
 
+def col_is_zero(col: np.array):
+    return not np.any(col) # numpy hack
+
+
 
 # res should be a value that is either in 0.00001 or 10^-4 or 2x10^-4 format
-def getResidual(string):
-    format1 = "[0-9][.][0-9]+"
-    format2 = "^[10\^]\-?[0-9]+"
-    format3 = "[0-9]+[x][1][0]\^\-?[0-9]+"
+def get_residual(string: str) -> float or None:
+    format1: str = "[0-9][.][0-9]+"
+    format2: str = "^[10\^]\-?[0-9]+"
+    format3: str = "[0-9]+[x][1][0]\^\-?[0-9]+"
 
     if re.search(format1, string):
         return float(string)
     elif re.search(format2, string):
         return 10 ** (int(string[3::]))
     elif re.search(format3, string):
-        xPos = string.find("x")
-        powerPos = string.find("^") + 1
-        return int(string[0:xPos]) * (10 ** int(string[powerPos::]))
+        x_pos = string.find("x")
+        power_pos = string.find("^") + 1
+        return int(string[0:x_pos]) * (10 ** int(string[power_pos::]))
     else:
         return None
+    
+
+def ensure_bool_set(settings: dict, key: str, default: bool):
+    if key not in settings:
+        settings[key] = default
+    else:
+        # convert to boolean
+        settings[key] = settings[key] == "True"
 
 
 def get_settings_from_file(file):
     """Reads the settings file and returns a dictionary with the properties and flags"""
-    separator = "="
-    settings = {}
+    separator: str = "="
+    settings: dict = {}
 
     # read/parse settings file and update settings appropriately, use default values where appropriate
     with open(file) as infile:
@@ -48,20 +60,28 @@ def get_settings_from_file(file):
                 settings[key] = value.strip()
 
     if "res" in settings:
-        settings["res"] = getResidual(settings["res"])
-        
+        settings["res"] = get_residual(settings["res"])
+
     # If k is not set, use k = 100
     if "k" not in settings:
         settings["k"] = 100
         # If and only if neither residual or k is set, use residual = 10^-4
         if "res" not in settings:
             settings["res"] = 0.0001
-    elif "res" not in settings:
-        settings["res"] = None
+    else:
+        settings["k"] = int(settings["k"])
+        if "res" not in settings:
+            settings["res"] = None
 
-
+    # default rounding to 2 decimal places
     if "precision" not in settings:
         settings["precision"] = 2
+
+    ensure_bool_set(settings, "apply_random_surfer", False)
+    ensure_bool_set(settings, "apply_probability_normalization", True)
+    ensure_bool_set(settings, "iterative", True)
+    ensure_bool_set(settings, "power", False)
+    ensure_bool_set(settings, "eigenvector", True)
 
     # return the settings object
     return settings
@@ -84,23 +104,33 @@ def get_H_from_file(file, settings):
     if n != H.shape[1]:
         raise Exception("Hyperlink matrix is not square")
 
-    # if applyRandomSurfer, add 1 to every cell in matrix
-    if settings["applyRandomSurfer"] == "True":
+    # if apply_random_surfer, add 1 to every cell in matrix
+    if settings["apply_random_surfer"]:
         H = H + 1
-        # 'normalize' each column to probability vector
+    
+    # apply probability normalization to each column
+    
 
-    H = H / H.sum(axis=0, keepdims=1)
-    if settings["applyRandomSurfer"] != "True":
-        # Check if there is a 0 column and print the message only in that case
-        for i in range(H.shape[0]):
-            if columnSum(i, H) == 0:
-                print("Warning: H columns are not probability vectors")
-                break
+    # if not using random surfer, print warning if matrix is not stochastic (has a 0 column)
+    if settings["apply_random_surfer"]:
+        H = H / H.sum(axis=0, keepdims=1)
+    else:
+        printed_warning: bool = False # so we only print a warning once
+        for i in range(n):
+            sum: float = np.sum(H[:, i])
+            if sum == 0:
+                if not printed_warning:
+                    print("\nWarning: H columns are not probability vectors")
+                    print("The eigenvector method relies on matrix being stochastic, and will produce incorrect results.")
+                    print("Other methods will show convergence to the zero vector.")
+                    printed_warning = True
+            else:
+                H[:, i] = H[:, i] / sum
 
     return H, n
 
 
-def get_x0_from_file(file, n):
+def get_x0_from_file(file: str, n: int):
     """Reads the initial probability vector file and returns a numpy vector"""
     x0 = []
     with open(file) as infile:
@@ -114,7 +144,7 @@ def get_x0_from_file(file, n):
     if x0.shape[0] != n:
         raise Exception("x_0 length is not equal to n")
 
-    # display warning message to console if x0 is not a probability vector, and 'normalize'
+    # display warning message to console if x0 is not a probability vector, and perform probability normalization
     if np.sum(x0) != 1:
         print("Warning: x_0 is not a probability vector, normalizing...")
         x0 = x0 / x0.sum(axis=0, keepdims=1)
