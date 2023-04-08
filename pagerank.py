@@ -6,40 +6,25 @@
 
 import numpy as np
 import sys
-from modules.file_reading import getHFromFile, getSettingsFromFile, getX0FromFile
-from modules.formatting import vectorToRanking
+from modules.file_reading import get_H_from_file, get_settings_from_file, get_x0_from_file
+from modules.formatting import vector_to_ranking
 
 
-def diffIsSmaller(x, xi, res) -> bool:
-    """Returns True if the sum of the differences between the entries of x and xi
-    is smaller than the set residual
-    """
-    sum = 0
-    for i in range(x.shape[0]):
-        sum += abs(x[i] - xi[i])
-        if sum > res:
-            return False
-    return True
-
-
-def generateX0(n):
+def generate_x0(n: int) -> np.array:
     """Returns a probability vector of size n where all probabilities are the same"""
     # Vector filled with 1's
     x0 = np.ones(n)
-    # Normalizing to generate probability vector
+    # Normalizing by the sum to generate probability vector
     x0 = x0 / x0.sum(axis=0, keepdims=1)
 
     return x0
 
-
-def applyIterativeMethod(H, x0, k, res, p):
+# TODO: verify no combination "breaks" it, should work with k, res, or k + res
+# does not mutate H or x0
+def apply_iterative_method(H: np.array , x0: np.array, k: int, res: float, p: int) -> np.array:
     """Implementation of the iterative method for the PageRank Algorithm.
     Returns the ranking vector
     """
-    # check stopping condition between k and res. Residual takes precendece if both are set.
-    # Make sure no combination "breaks" it, should work with k, res, or k + res
-    # if using k, basically the same idea as in Ex496.py
-    # if using residual, similar to Ex496.py but each iteration we check to see if diff less than residual
     x = np.copy(x0)  # solution vector
     xi = np.copy(x0)  # iteration vector
 
@@ -47,19 +32,37 @@ def applyIterativeMethod(H, x0, k, res, p):
     print("k =", k, ", res =", res)
     print("H = \n", H)
     print("x0 =", x0)
+    print("")
 
-    for i in range(k):
+    # iterate Hx_i for residual < res, or for k iterations if res is not set
+    stop = False
+    i = 0
+    prev = float('inf')
+    while not stop:
         xi = x
         x = np.matmul(H, xi)
-        if res != None:
-            if diffIsSmaller(x, xi, res):
-                break
+        i += 1
+        if res == None:
+            stop = i == k
+        else:
+            sum = np.sum(np.abs(x - xi))
+            stop = sum < res
+            if stop:
+                print("Converged normally after", i, "iterations.")
+            # due to float point imprecision, residual method may not converge properly
+            if (i % 10 == 0):
+                stop = prev < sum  # exit if residual has grown over 10 iterations
+                if stop:
+                    print("Exiting after", i, "iterations due to floating point imprecision.")
+                    print("Residual is approximately around", prev, "to", sum)
+                prev = sum
 
     x = np.matrix.round(x, p)
 
     print("\n Ranking vector \n")
+    #print(f'x = {x:.{p}f}') 
     print("x =", x)
-    vectorToRanking(x, p)
+    vector_to_ranking(x, p)
     return x
 
 
@@ -82,7 +85,7 @@ def applyPowerIterativeMethod(H0, x0, k, p):
 
     print("\n Ranking vector \n")
     print("x =", x)
-    vectorToRanking(x, p)
+    vector_to_ranking(x, p)
     return x
 
 
@@ -114,7 +117,7 @@ def applyDominantEigenvectorMethod(H, p):
 
     print("\n Ranking vector \n")
     print("x = ", x)
-    vectorToRanking(x, p)
+    vector_to_ranking(x, p)
     return x
 
 
@@ -134,17 +137,19 @@ def main():
         xVectorFile = None
 
     # Set up all necessary variables and flags
-    settings = getSettingsFromFile(settingsFile)
-    H, n = getHFromFile(hMatrixFile, settings)
+    settings = get_settings_from_file(settingsFile)
+    H, n = get_H_from_file(hMatrixFile, settings)
 
     p = int(settings["precision"])
+
+    np.set_printoptions(formatter={'float': lambda x: f'{x:.{p}f}'})
 
     x0 = []
     # check settings.usingCustomInitialRanks and call getXoFromFile or generateX0 as appropriate
     if settings["usingCustomInitialRanks"] == "True" and xVectorFile != None:
-        x0 = getX0FromFile(xVectorFile, n)
+        x0 = get_x0_from_file(xVectorFile, n)
     else:
-        x0 = generateX0(n)
+        x0 = generate_x0(n)
 
     # Format matrixes to specified precision
     H = np.matrix.round(H, p)
@@ -152,11 +157,11 @@ def main():
 
     if settings["iterative"] == "True":  # if iterative flag is set
         if settings["res"] != None:
-            iterationX = applyIterativeMethod(
+            iterationX = apply_iterative_method(
                 H, x0, int(settings["k"]), float(settings["res"]), p
             )
         else:
-            iterationX = applyIterativeMethod(
+            iterationX = apply_iterative_method(
                 H, x0, int(settings["k"]), settings["res"], p
             )
 

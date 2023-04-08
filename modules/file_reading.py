@@ -35,7 +35,7 @@ def getResidual(string):
         return None
 
 
-def getSettingsFromFile(file):
+def get_settings_from_file(file):
     """Reads the settings file and returns a dictionary with the properties and flags"""
     separator = "="
     settings = {}
@@ -66,7 +66,7 @@ def getSettingsFromFile(file):
     return settings
 
 
-def getHFromFile(file, settings):
+def get_H_from_file(file, settings):
     """Reads the Hyperlink matrix file and returns a numpy 2D array"""
     # Read from file, expect a matrix that is 0's and 1's, 1s for outlinks.
     # We will 'normalize' columns to probability vectors later
@@ -99,7 +99,7 @@ def getHFromFile(file, settings):
     return H, n
 
 
-def getX0FromFile(file, n):
+def get_x0_from_file(file, n):
     """Reads the initial probability vector file and returns a numpy vector"""
     x0 = []
     with open(file) as infile:
