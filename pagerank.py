@@ -20,10 +20,14 @@ def generate_x0(n: int) -> np.array:
     return x0
 
 # does not mutate H or x0
-def apply_iteration(H: np.array , x0: np.array, k: int, res: float or None) -> np.array:
+def apply_iteration(H: np.array , x0: np.array, settings: dict) -> np.array:
     """Implementation of the iterative method for the PageRank Algorithm.
     Returns the ranking vector
     """
+    k: int = settings["k"]
+    res: float or None = settings["res"]
+    use_probability_normalization: bool = settings["apply_probability_normalization"]
+
     x: np.array = np.copy(x0)  # solution vector
     xi: np.array = np.copy(x0)  # iteration vector
 
@@ -46,6 +50,8 @@ def apply_iteration(H: np.array , x0: np.array, k: int, res: float or None) -> n
         # perform next iteration
         xi = x
         x = np.matmul(H, xi)
+        if use_probability_normalization:
+            x = x / np.sum(x)
         i += 1
 
         if res == None: # ie. stop after k iterations
@@ -55,7 +61,7 @@ def apply_iteration(H: np.array , x0: np.array, k: int, res: float or None) -> n
             stop = sum < res
             if stop:
                 print("\nConverged normally after", i, "iterations.")
-            # due to float point imprecision, residual method may not converge properly
+            # due to float point imprecision, residual method may not converge properly if residual is too precise
             if (i % 10 == 0):
                 stop = prev < sum  # exit if residual has grown over 10 iterations
                 if stop:
@@ -65,10 +71,13 @@ def apply_iteration(H: np.array , x0: np.array, k: int, res: float or None) -> n
     return x
 
 
-def apply_power_iteration(H0: np.array, x0: np.array, k: int) -> np.array:
+def apply_power_iteration(H0: np.array, x0: np.array, settings: dict) -> np.array:
     """Implementation of the power iteration method for the PageRank Algorithm.
     Returns the ranking vector
     """
+    k = settings["k"]
+    use_probability_normalization: bool = settings["apply_probability_normalization"]
+
     H: np.array = np.copy(H0)
 
     print("\n Power Iteration method \n")
@@ -78,6 +87,11 @@ def apply_power_iteration(H0: np.array, x0: np.array, k: int) -> np.array:
 
     for _ in range(k):
         H = np.matmul(H, H0)
+        if use_probability_normalization:
+            for i in range(H.shape[0]):
+                sum: float = np.sum(H[:, i])
+                if sum != 0:
+                    H[:, i] = H[:, i] / sum
 
     print("H^k = \n", H)
 
@@ -138,7 +152,6 @@ def main():
     H, n = get_H_from_file(h_matrix_file, settings)
 
     p = int(settings["precision"])
-    use_probability_normalization: bool = settings["apply_probability_normalization"]
 
     np.set_printoptions(formatter={'float': lambda x: f'{x:.{p}f}'})
 
@@ -155,13 +168,13 @@ def main():
 
     if settings["iterative"]:  # if iterative flag is set
         if settings["res"] != None:
-            iteration_result = apply_iteration(H, x0, settings["k"], float(settings["res"]))
+            iteration_result = apply_iteration(H, x0, settings)
         else:
-            iteration_result = apply_iteration(H, x0, settings["k"], settings["res"])
+            iteration_result = apply_iteration(H, x0, settings)
         display_results(iteration_result, p)
 
     if settings["power"]:  # if power iterative flag is set
-        power_iteration_result = apply_power_iteration(H, x0, settings["k"])
+        power_iteration_result = apply_power_iteration(H, x0, settings)
         display_results(power_iteration_result, p)
 
     if settings["eigenvector"]:  # if eigenvector method flag is set

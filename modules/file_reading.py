@@ -8,19 +8,6 @@ import csv
 import numpy as np
 import re
 
-
-def column_sum(n, matrix):
-    """Returns the sum of all entries in column n in matrix"""
-    sum = 0
-    for row in range(matrix.shape[1]):
-        sum += matrix[row][n]
-    return sum
-
-def col_is_zero(col: np.array):
-    return not np.any(col) # numpy hack
-
-
-
 # res should be a value that is either in 0.00001 or 10^-4 or 2x10^-4 format
 def get_residual(string: str) -> float or None:
     format1: str = "[0-9][.][0-9]+"
@@ -108,9 +95,6 @@ def get_H_from_file(file, settings):
     if settings["apply_random_surfer"]:
         H = H + 1
     
-    # apply probability normalization to each column
-    
-
     # if not using random surfer, print warning if matrix is not stochastic (has a 0 column)
     if settings["apply_random_surfer"]:
         H = H / H.sum(axis=0, keepdims=1)
