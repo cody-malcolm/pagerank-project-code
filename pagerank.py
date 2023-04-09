@@ -62,7 +62,7 @@ def apply_iteration(H: np.array , x0: np.array, settings: dict) -> np.array:
             if stop:
                 print("\nConverged normally after", i, "iterations.")
             # due to float point imprecision, residual method may not converge properly if residual is too precise
-            if (i % 10 == 0):
+            elif (i % 10 == 0):
                 stop = prev < sum  # exit if residual has grown over 10 iterations
                 if stop:
                     print("\nExiting after", i, "iterations due to floating point imprecision.")
@@ -98,7 +98,7 @@ def apply_power_iteration(H0: np.array, x0: np.array, settings: dict) -> np.arra
     return np.matmul(H, x0)
 
 
-def apply_dominant_eigenvector_method(H: np.array) -> np.array:
+def apply_dominant_eigenvector_method(H: np.array, precision: int) -> np.array:
     """Implementation of the Dominant Eigenvector method for the PageRank Algorithm.
     Returns the ranking vector
     """
@@ -109,16 +109,16 @@ def apply_dominant_eigenvector_method(H: np.array) -> np.array:
     # We just need the dominant eigenvector of H, then to "normalize" it to sum to 1
     eigenvalues, eigenvectors = np.linalg.eig(H)
 
-    dominant_eigenvector = []
-    for entry in eigenvectors:
-        dominant_eigenvector.append(entry[0].real)
-
-    dominant_eigenvector = np.array(dominant_eigenvector)
+    # the rounding and +0 is to avoid "-0" in the output
+    dominant_eigenvector: np.array = np.around(np.array(eigenvectors[:, 0]).real, precision + 2) + 0
+    
+    # flip signs if eigenvector has negative signs
+    if (np.sum(dominant_eigenvector < 0)):
+        dominant_eigenvector *= -1
 
     print("\nDominant eigenvalue = %.2f" % eigenvalues[0].real)
     print("Dominant eigenvector = ", dominant_eigenvector)
 
-    # This is acting up, getting a -0 ?
     return dominant_eigenvector / dominant_eigenvector.sum(axis=0, keepdims=1)
 
 
@@ -178,7 +178,7 @@ def main():
         display_results(power_iteration_result, p)
 
     if settings["eigenvector"]:  # if eigenvector method flag is set
-        eigenvector_result = apply_dominant_eigenvector_method(H)
+        eigenvector_result = apply_dominant_eigenvector_method(H, p)
         display_results(eigenvector_result, p)
 
 
