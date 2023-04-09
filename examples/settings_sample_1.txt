@@ -1,6 +1,7 @@
 apply_random_surfer=True
 apply_probability_normalization=True
 iterative=True
+plot_results=True
 power=False
 eigenvector=True
 precision=4

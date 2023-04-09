@@ -6,9 +6,26 @@
 
 import numpy as np
 import sys
+import matplotlib.pyplot as plt
 from modules.file_reading import get_H_from_file, get_settings_from_file, get_x0_from_file
 from modules.formatting import vector_to_ranking
 
+
+def plot_results(results: np.array):
+    _, ax = plt.subplots()
+
+    k = np.arange(results.shape[0])
+    for i in range(results.shape[1]):
+        y = results[:, i]  
+        ax.scatter(k, y, label="Page " + str(i+1))
+    
+    plt.xlabel("Iteration")
+    plt.ylabel("Page rank")
+    plt.legend(bbox_to_anchor=(1.0, 0.5), loc="center left")
+    plt.tight_layout()
+    plt.show()
+    plt.figure().clear()
+    plt.close()
 
 def generate_x0(n: int) -> np.array:
     """Returns a probability vector of size n where all probabilities are the same"""
@@ -20,13 +37,14 @@ def generate_x0(n: int) -> np.array:
     return x0
 
 # does not mutate H or x0
-def apply_iteration(H: np.array , x0: np.array, settings: dict) -> np.array:
+def apply_iteration(H: np.array, x0: np.array, settings: dict) -> np.array:
     """Implementation of the iterative method for the PageRank Algorithm.
     Returns the ranking vector
     """
     k: int = settings["k"]
     res: float or None = settings["res"]
     use_probability_normalization: bool = settings["apply_probability_normalization"]
+    plot_requested: bool = settings["plot_results"]
 
     x: np.array = np.copy(x0)  # solution vector
     xi: np.array = np.copy(x0)  # iteration vector
@@ -41,6 +59,8 @@ def apply_iteration(H: np.array , x0: np.array, settings: dict) -> np.array:
     print("H = \n", H)
     print("x0 =", x0)
 
+    results = [x0]
+
     # iterate Hx_i for residual < res, or for k iterations if res is not set
     stop: bool = False # stop flag
     i: int = 0 # iteration
@@ -53,6 +73,8 @@ def apply_iteration(H: np.array , x0: np.array, settings: dict) -> np.array:
         if use_probability_normalization:
             x = x / np.sum(x)
         i += 1
+        if plot_requested:
+            results.append(np.copy(x))
 
         if res == None: # ie. stop after k iterations
             stop = i == k
@@ -68,6 +90,10 @@ def apply_iteration(H: np.array , x0: np.array, settings: dict) -> np.array:
                     print("\nExiting after", i, "iterations due to floating point imprecision.")
                     print("Residual is approximately around", prev, "to", sum)
                 prev = sum
+    
+    if plot_requested:
+        plot_results(np.array(results))
+
     return x
 
 
@@ -111,7 +137,7 @@ def apply_dominant_eigenvector_method(H: np.array, precision: int) -> np.array:
 
     # the rounding and +0 is to avoid "-0" in the output
     dominant_eigenvector: np.array = np.around(np.array(eigenvectors[:, 0]).real, precision + 2) + 0
-    
+
     # flip signs if eigenvector has negative signs
     if (np.sum(dominant_eigenvector < 0)):
         dominant_eigenvector *= -1

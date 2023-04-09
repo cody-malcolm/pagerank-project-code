@@ -69,6 +69,7 @@ def get_settings_from_file(file):
     ensure_bool_set(settings, "iterative", True)
     ensure_bool_set(settings, "power", False)
     ensure_bool_set(settings, "eigenvector", True)
+    ensure_bool_set(settings, "plot_results", False)
 
     # return the settings object
     return settings
