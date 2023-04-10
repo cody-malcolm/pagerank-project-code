@@ -1,9 +1,9 @@
 apply_random_surfer=True
 apply_probability_normalization=True
 iterative=True
-plot_results=True
+plot_results=False
 power=False
 eigenvector=True
-precision=4
+precision=3
 k=64
 res=2x10^-8
