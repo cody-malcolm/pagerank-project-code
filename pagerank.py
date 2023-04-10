@@ -167,9 +167,9 @@ def main():
     settings_file: str = sys.argv[1]
     h_matrix_file: str = sys.argv[2]
     if len(sys.argv) == 4:
-        x_vector_file: str = sys.argv[3]
+        x_vector_file = sys.argv[3]
     else:
-        x_vector_file: str = None
+        x_vector_file = None
 
     # Set up all necessary variables and flags
     settings: dict = get_settings_from_file(settings_file)
