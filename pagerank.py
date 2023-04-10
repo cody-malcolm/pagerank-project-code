@@ -179,10 +179,12 @@ def main():
 
     x0: list = []
     
-    if x_vector_file != None:
-        x0 = get_x0_from_file(x_vector_file, n)
-    else:
-        x0 = generate_x0(n)
+    # don't bother to construct x0 if it will not be used
+    if settings["iterative"] or settings["power"]:
+        if x_vector_file != None:
+            x0 = get_x0_from_file(x_vector_file, n)
+        else:
+            x0 = generate_x0(n)
         
     # set numpy to print the requested number of decimal places
     np.set_printoptions(formatter={'float': lambda x: f'{x:.{p}f}'})
