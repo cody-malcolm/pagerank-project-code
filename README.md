@@ -2,6 +2,7 @@
 
 ## Contributors
 Avril Lopez van Domselaar - 100746008
+
 Cody Malcolm - 100753739
 
 ## Usage
@@ -9,8 +10,11 @@ Cody Malcolm - 100753739
 ### Running the Project
 
 To run the project, execute the following command:
+
 `python3 pagerank.py <settings_file> <h_matrix_file> [initial_x_file]`
+
 The settings file is a text file that contains zero or more `key=value` pairs, as described in the next section. The matrix file is a `.csv` format file that describes the hyperlink matrix to be used, as described below. The initial x file, if used, is a `.csv` format file that describes the initial x vector to be used, as described below.
+
 The program checks that the correct number of arguments are present, but does not validate that the given inputs in the files are correct or meaningful. It is up to the user to define their inputs correctly according to the instructions below.
 
 ### Settings Options
@@ -50,11 +54,11 @@ There are four valid options for `res`:
 
 ### Matrix File Format
 
-The matrix file expects a *modified* hyperlink matrix in `.csv` format where each line of the file corresponds to a row of the matrix. As with a typical hyperlink matrix (as described in the report), each column represents one page and row *i* of column *j* indicates whether page *j* contains an out link to page *i*. However, the value to use here is simply `1` instead of `1/|Pi|`. Thus the hyperlink matrix will be comprised only of 0s and 1s. The program will apply the random surfer algorithm (if requested), and then perform probability normalization on each column of the matrix to make it stochastic. This approach was taken to simplify the input process, simplify the code when random surfer is applied, and reduce instances of floating point imprecision. There are several example files in the `examples` directory.
+The matrix file expects a *modified* hyperlink matrix in `.csv` format where each line of the file corresponds to a row of the matrix. As with a typical hyperlink matrix (as described in the report), each column represents one page and row *i* of column *j* indicates whether or not page *j* contains an out link to page *i*. However, the value to use here is simply `1` instead of `1/|Pi|`. Thus the hyperlink matrix will be comprised only of `0`s and `1`s. The program will apply the random surfer algorithm (if requested), and then perform probability normalization on each column of the matrix to make it stochastic. This approach was taken to simplify the input process, simplify the code when random surfer is applied, and reduce instances of floating point imprecision. There are several example files in the `examples` directory.
 
 ### Initial X File Format
 
-The initial x file expects a single row of input in `.csv` format. It expects a probability vector and will perform probability normalization if required. Since the user may not realize their input is not a probability vector, a warning will be printed in this case. An error will be thrown if the length of x does not match the size of H. There are several valid example files in the `examples` directory.
+The initial x file expects a single row of input in `.csv` format. It expects a probability vector and will perform probability normalization if required. Since the user may not realize their input is not a probability vector, a warning will be printed in this case. An error will be thrown if the length of `x` does not match the size of `H`. There are several valid example files in the `examples` directory.
 
 ### Dependencies
 
