@@ -7,16 +7,16 @@
 import numpy as np
 
 
-def vector_to_ranking(x, p):
+def vector_to_ranking(x: np.array, p: int) -> None:
     """Displays the page ranking given a rank vector x"""
-    n = x.shape[0]
+    n: int = x.shape[0]
 
     # create a dictionary to represent the page ranks
-    pages = {}
+    pages: dict = {}
     for i in range(n):
         pages[f"P({i+1})"] = x[i]
 
-    sortedPages = sorted(pages.items(), key=lambda item: item[1], reverse=True)
+    sortedPages: list = sorted(pages.items(), key=lambda item: item[1], reverse=True)
 
     print("\n Ranking \n")
     for i in range(n):
@@ -24,7 +24,3 @@ def vector_to_ranking(x, p):
               sortedPages[i][0], f'{sortedPages[i][1]:.{p}f}'))
 
     print("\n-----------------------------------------------------------")
-
-
-def printVector(x):
-    print(x)

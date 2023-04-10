@@ -11,10 +11,11 @@ from modules.file_reading import get_H_from_file, get_settings_from_file, get_x0
 from modules.formatting import vector_to_ranking
 
 
-def plot_results(results: np.array):
+def plot_results(results: np.array) -> None:
+    """Plots the results in a scatter plot"""
     _, ax = plt.subplots()
 
-    k = np.arange(results.shape[0])
+    k: np.array = np.arange(results.shape[0])
     for i in range(results.shape[1]):
         y = results[:, i]  
         ax.scatter(k, y, label="Page " + str(i+1))
@@ -27,10 +28,11 @@ def plot_results(results: np.array):
     plt.figure().clear()
     plt.close()
 
+
 def generate_x0(n: int) -> np.array:
     """Returns a probability vector of size n where all probabilities are the same"""
     # Vector filled with 1's
-    x0 = np.ones(n)
+    x0: np.array = np.ones(n)
     # Normalizing by the sum to generate probability vector
     x0 = x0 / x0.sum(axis=0, keepdims=1)
 
@@ -59,7 +61,7 @@ def apply_iteration(H: np.array, x0: np.array, settings: dict) -> np.array:
     print("H = \n", H)
     print("x0 =", x0)
 
-    results = [x0]
+    results: list = [x0]
 
     # iterate Hx_i for residual < res, or for k iterations if res is not set
     stop: bool = False # stop flag
@@ -101,7 +103,7 @@ def apply_power_iteration(H0: np.array, x0: np.array, settings: dict) -> np.arra
     """Implementation of the power iteration method for the PageRank Algorithm.
     Returns the ranking vector
     """
-    k = settings["k"]
+    k: int = settings["k"]
     use_probability_normalization: bool = settings["apply_probability_normalization"]
 
     H: np.array = np.copy(H0)
@@ -130,9 +132,8 @@ def apply_dominant_eigenvector_method(H: np.array, precision: int) -> np.array:
     """
     print("\n Dominant Eigenvector method \n")
     print("H = \n", H)
-    x = ""
 
-    # We just need the dominant eigenvector of H, then to "normalize" it to sum to 1
+    # We just need the dominant eigenvector of H, then to apply probability normalization to it
     eigenvalues, eigenvectors = np.linalg.eig(H)
 
     # the rounding and +0 is to avoid "-0" in the output
@@ -148,24 +149,21 @@ def apply_dominant_eigenvector_method(H: np.array, precision: int) -> np.array:
     return dominant_eigenvector / dominant_eigenvector.sum(axis=0, keepdims=1)
 
 
-def display_results(x: np.array, p: int):
+def display_results(x: np.array, p: int) -> None:
+    """Displays the solution array, to precision p"""
     print("\n Ranking vector \n")
     print("x =", x)
     vector_to_ranking(x, p)
 
-def main():
-    # get arguments from user
-    # - settings file (eg. bool to apply random surfer, bool to use custom initial ranks,
-    # flag to indicate which of iteration, power iteration, and/or dominant eigenvector to use,
-    # int k and/or float residual, number of decimals to round to)
-    # - H file: a file to read in the hyperlink matrix, I recommend .csv or .tsv
-    # - x0 file: optional depending on args, a .csv or .tsv to specify initial weights
 
+def main():
+    """Main method"""
     if len(sys.argv) < 3:
         print("Incorrect usage. Expected: 'python3 pagerank.py <settings_file> <h_matrix_file> [x_vector_file]'")
         print("See README for more details.")
         exit(-1)
 
+    # Read in the input filenames
     settings_file: str = sys.argv[1]
     h_matrix_file: str = sys.argv[2]
     if len(sys.argv) == 4:
@@ -174,37 +172,31 @@ def main():
         x_vector_file: str = None
 
     # Set up all necessary variables and flags
-    settings = get_settings_from_file(settings_file)
+    settings: dict = get_settings_from_file(settings_file)
     H, n = get_H_from_file(h_matrix_file, settings)
 
-    p = int(settings["precision"])
+    p: int = int(settings["precision"])
 
-    np.set_printoptions(formatter={'float': lambda x: f'{x:.{p}f}'})
-
-    x0 = []
+    x0: list = []
     
     if x_vector_file != None:
         x0 = get_x0_from_file(x_vector_file, n)
     else:
         x0 = generate_x0(n)
-
-    # Format matrixes to specified precision
-    H = np.matrix.round(H, p)
-    x0 = np.matrix.round(x0, p)
+        
+    # set numpy to print the requested number of decimal places
+    np.set_printoptions(formatter={'float': lambda x: f'{x:.{p}f}'})
 
     if settings["iterative"]:  # if iterative flag is set
-        if settings["res"] != None:
-            iteration_result = apply_iteration(H, x0, settings)
-        else:
-            iteration_result = apply_iteration(H, x0, settings)
+        iteration_result: np.array = apply_iteration(H, x0, settings)
         display_results(iteration_result, p)
 
     if settings["power"]:  # if power iterative flag is set
-        power_iteration_result = apply_power_iteration(H, x0, settings)
+        power_iteration_result: np.array = apply_power_iteration(H, x0, settings)
         display_results(power_iteration_result, p)
 
     if settings["eigenvector"]:  # if eigenvector method flag is set
-        eigenvector_result = apply_dominant_eigenvector_method(H, p)
+        eigenvector_result: np.array = apply_dominant_eigenvector_method(H, p)
         display_results(eigenvector_result, p)
 
 

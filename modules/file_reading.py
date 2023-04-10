@@ -10,6 +10,7 @@ import re
 
 # res should be a value that is either in 0.00001 or 10^-4 or 2x10^-4 format
 def get_residual(string: str) -> float or None:
+    """Given a string residual, parses and returns as a float, or None if parsing fails"""
     format1: str = "[0-9][.][0-9]+"
     format2: str = "^[10\^]\-?[0-9]+"
     format3: str = "[0-9]+[x][1][0]\^\-?[0-9]+"
@@ -19,14 +20,14 @@ def get_residual(string: str) -> float or None:
     elif re.search(format2, string):
         return 10 ** (int(string[3::]))
     elif re.search(format3, string):
-        x_pos = string.find("x")
-        power_pos = string.find("^") + 1
+        x_pos: int = string.find("x")
+        power_pos: int = string.find("^") + 1
         return int(string[0:x_pos]) * (10 ** int(string[power_pos::]))
     else:
         return None
     
 
-def ensure_bool_set(settings: dict, key: str, default: bool):
+def ensure_bool_set(settings: dict, key: str, default: bool) -> None:
     if key not in settings:
         settings[key] = default
     else:
@@ -34,7 +35,7 @@ def ensure_bool_set(settings: dict, key: str, default: bool):
         settings[key] = settings[key] == "True"
 
 
-def get_settings_from_file(file):
+def get_settings_from_file(file: str) -> dict:
     """Reads the settings file and returns a dictionary with the properties and flags"""
     separator: str = "="
     settings: dict = {}
@@ -75,10 +76,10 @@ def get_settings_from_file(file):
     return settings
 
 
-def get_H_from_file(file, settings):
+def get_H_from_file(file: str, settings: dict):
     """Reads the Hyperlink matrix file and returns a numpy 2D array"""
     # Read from file, expect a matrix that is 0's and 1's, 1s for outlinks.
-    # We will 'normalize' columns to probability vectors later
+    # We will perform probability normalization on columns later
     H = []
     with open(file) as infile:
         fileContents = csv.reader(infile, quoting=csv.QUOTE_NONNUMERIC)
@@ -87,7 +88,7 @@ def get_H_from_file(file, settings):
 
     H = np.array(H)
 
-    n = H.shape[0]  # determine n
+    n: int = H.shape[0]  # determine n
     # throw exception with descriptive error if matrix is not square
     if n != H.shape[1]:
         raise Exception("Hyperlink matrix is not square")
@@ -115,7 +116,7 @@ def get_H_from_file(file, settings):
     return H, n
 
 
-def get_x0_from_file(file: str, n: int):
+def get_x0_from_file(file: str, n: int) -> np.array:
     """Reads the initial probability vector file and returns a numpy vector"""
     x0 = []
     with open(file) as infile:
